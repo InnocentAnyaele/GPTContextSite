@@ -12,22 +12,41 @@ export default function Body() {
   const [userMessage, setUserMessage] = useState("");
   const [disableChat, setDisableChat] = useState(true);
   const [disableUpload, setDisableUpload] = useState(false);
+  const [responseLoading, setResponseLoading] = useState(false);
 
-  const [chats, setChats] = useState([
-    { sender: "user", message: "When did I spend the most?" },
-    {
-      sender: "AI",
-      message:
-        "According to your document, you spent the most on 4th April with an amount of GHC 5000",
-    },
-    { sender: "user", message: "How much did I spend on 16 March." },
-    { sender: "AI", message: "On 16th March you spent nothing." },
-    { sender: "user", message: "Can you summarize my statement for me?" },
-  ]);
+  // const [chats, setChats] = useState([
+  //   { sender: "user", message: "When did I spend the most?" },
+  //   {
+  //     sender: "AI",
+  //     message:
+  //       "According to your document, you spent the most on 4th April with an amount of GHC 5000",
+  //   },
+  //   { sender: "user", message: "How much did I spend on 16 March." },
+  //   { sender: "AI", message: "On 16th March you spent nothing." },
+  //   { sender: "user", message: "Can you summarize my statement for me?" },
+  // ]);
+
+  const [chats, setChats] = useState<any[]>([]);
 
   useEffect(() => {
     chatRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chats]);
+
+  function clearChat() {
+    // setChats([]);
+    localStorage.clear();
+    setDisableChat(true);
+    setDisableUpload(false);
+    setFiles([]);
+    setChats((prevChats: any) => [
+      ...prevChats,
+      {
+        sender: "AI",
+        message: "Context has been cleared",
+      },
+    ]);
+    // window.location.reload();
+  }
 
   function handleDragOver(e: any) {
     e.preventDefault();
@@ -61,7 +80,6 @@ export default function Body() {
     }
   }
 
-  // triggers when file is selected with click
   const handleChange = function (e: any) {
     e.preventDefault();
     console.log("File has been added");
@@ -85,23 +103,103 @@ export default function Body() {
       setUploadError("No file has been selected");
       return;
     }
+    setChats((prevChats: any) => [
+      ...prevChats,
+      {
+        sender: "AI",
+        message: "Reading your document...",
+      },
+    ]);
+    let data = new FormData();
+    // setInterval(clearChat(), 5000);
+    // setTimeout(clearChat, 300000);
+
+    data.append("file", files);
+    axios
+      .post("/addContext", data)
+      .then((res) => {
+        console.log(res);
+        localStorage.setItem("indexKey", res.data);
+
+        setFiles([]);
+        setDisableUpload(true);
+        setDisableChat(false);
+        setTimeout(clearChat, 300000);
+        setChats((prevChats: any) => [
+          ...prevChats,
+          {
+            sender: "AI",
+            message:
+              "Context has been uploaded. Ask away!! NB: Session will expire after 5 mins.",
+          },
+        ]);
+      })
+      .catch((err) => {
+        console.log(err);
+        setChats((prevChats: any) => [
+          ...prevChats,
+          {
+            sender: "AI",
+            message:
+              "Sorry something went wrong. Try again later or restart context",
+          },
+        ]);
+      });
   }
 
   function handleSend() {
+    // localStorage.setItem("indexKey", "3580a917-c353-11ed-9225-20c19bff2da4");
+    if (localStorage.getItem("indexKey") === null) {
+      setChats((prevChats: any) => [
+        ...prevChats,
+        {
+          sender: "AI",
+          message:
+            "Chat context has expired after 5 mins. Clear context and upload new files.",
+        },
+      ]);
+      return;
+    }
     if (userMessage) {
       setChats((prevChats: any) => [
         ...prevChats,
         { sender: "user", message: userMessage },
       ]);
       setUserMessage("");
+      setResponseLoading(true);
+      let indexKey: any = localStorage.getItem("indexKey");
+      let prompt = userMessage;
+      let data = new FormData();
+      data.append("prompt", prompt);
+      data.append("indexKey", indexKey);
+      console.log(data);
+      axios
+        .post("/getResponse", data)
+        .then((res) => {
+          setResponseLoading(false);
+          setChats((prevState: any) => [
+            ...prevState,
+            { sender: "AI", message: res.data },
+          ]);
+          console.log(res);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          setResponseLoading(false);
+          // alert("Something went wrong");
+          // console.log(err);
+          // console.log(err.response.data);
+          // console.log(err.response.status);
+          setChats((prevState: any) => [
+            ...prevState,
+            {
+              sender: "AI",
+              message:
+                "Sorry something went wrong. Try again later or restart context",
+            },
+          ]);
+        });
     }
-  }
-
-  function clearChat() {
-    setChats([]);
-    localStorage.clear();
-    setDisableChat(true);
-    setDisableUpload(false);
   }
 
   // triggers the input when the button is clicked
@@ -156,7 +254,7 @@ export default function Body() {
           onClick={handleSubmitFile}
           disabled={disableUpload}
         >
-          <span className="p-2 text-white">Submit files</span>
+          <span className="p-2 text-white">Submit</span>
         </button>
         {uploadError && <p>{uploadError}</p>}
         <div className="flex flex-col items-center">
@@ -174,39 +272,44 @@ export default function Body() {
         </div>
       </form>
       <div className="flex flex-col w-[60%] h-[100vh]">
-        <div className="overflow-y-auto h-full">
-          <div className="rounded-lg mt-3 w-full h-full p-4 border border-[#ebebeb] flex flex-col justify-end">
-            {chats.length > 0 ? (
-              <div className="flex flex-col">
-                <div className="flex flex-col space-y-4">
-                  {chats.map((chat: any, idx: any) => (
-                    <div
-                      key={idx}
-                      ref={chatRef}
+        <div className="rounded-lg mt-3 w-full h-full p-4 border border-[#ebebeb] flex flex-col justify-end overflow-y-auto">
+          {/* <div className="rounded-lg mt-3 w-full h-full p-4 border border-[#ebebeb] flex flex-col justify-end "> */}
+          {chats.length > 0 ? (
+            <div className="flex flex-col overflow-y-auto">
+              <div className="flex flex-col space-y-4">
+                {chats.map((chat: any, idx: any) => (
+                  <div
+                    key={idx}
+                    ref={chatRef}
+                    className={`${
+                      chat.sender === "user"
+                        ? "bg-[#2460ba] ml-auto"
+                        : "bg-[#ebebeb] mr-auto"
+                    } p-3 max-w-[70%] rounded-lg`}
+                  >
+                    <span
                       className={`${
-                        chat.sender === "user"
-                          ? "bg-[#2460ba] ml-auto"
-                          : "bg-[#ebebeb]"
-                      } p-2 w-[50%] rounded-lg`}
+                        chat.sender === "user" ? "text-white" : "text-black"
+                      } break-all`}
                     >
-                      <span
-                        className={`${
-                          chat.sender === "user" ? "text-white" : "text-black"
-                        } break-all`}
-                      >
-                        {chat.message}
-                      </span>
-                    </div>
-                  ))}
+                      {chat.message}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {responseLoading && (
+                <div className="text-center mt-3">
+                  <span className="text-[#bababa]">Loading response...</span>
                 </div>
-              </div>
-            ) : (
-              // </div>
-              <div className="flex justify-center mt-[10%]">
-                <span className="text-[#bababa]">No chats yet</span>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            // </div>
+            <div className="flex justify-center mt-[10%]">
+              <span className="text-[#bababa]">No chats yet</span>
+            </div>
+          )}
+          {/* </div> */}
         </div>
 
         <input
@@ -221,7 +324,10 @@ export default function Body() {
             <button onClick={clearChat}>
               <img alt="refresh-logo" src={RefreshImg} className="w-4 h-4" />
             </button>
-            <span className="text-[#949494]">Context will clear in 05:00 </span>
+            <span className="text-[#949494] italic text-[12px]">
+              Session will expire 5 minutes after creation <br></br>
+              This is to control any high demand / no. of requests.
+            </span>
           </div>
           <button
             className={`${
@@ -229,6 +335,7 @@ export default function Body() {
             }  p-2 rounded-md h-10 w-28`}
             onClick={handleSend}
             disabled={disableChat}
+            // disabled={false}
           >
             <span className="text-white">Send</span>
           </button>
