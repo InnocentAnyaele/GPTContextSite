@@ -48,6 +48,22 @@ export default function Body() {
     // window.location.reload();
   }
 
+  function reset() {
+    setChats([]);
+    localStorage.clear();
+    setDisableChat(true);
+    setDisableUpload(false);
+    setFiles([]);
+    // setChats((prevChats: any) => [
+    //   ...prevChats,
+    //   {
+    //     sender: "AI",
+    //     message: "Context has been cleared",
+    //   },
+    // ]);
+    window.location.reload();
+  }
+
   function handleDragOver(e: any) {
     e.preventDefault();
     e.stopPropagation();
@@ -92,10 +108,12 @@ export default function Body() {
     }
   };
 
-  function removeFile(fileName: any) {
-    setFiles((current: any) =>
-      current.filter((file: any) => file.name !== fileName)
-    );
+  function removeFile(fileName: any, idx: any) {
+    console.log("this is the old arr", files);
+    const newArr = [...files];
+    newArr.splice(idx, 1);
+    setFiles([]);
+    setFiles(newArr);
   }
 
   function handleSubmitFile(e: any) {
@@ -110,13 +128,22 @@ export default function Body() {
         message: "Reading your document...",
       },
     ]);
-    let data = new FormData();
-    // setInterval(clearChat(), 5000);
-    // setTimeout(clearChat, 300000);
 
-    data.append("file", files);
+    let data = new FormData();
+    data.append("fileLength", files.length);
+
+    for (let i = 0; i < files.length; i++) {
+      data.append("file" + i.toString(), files[i]);
+    }
+
+    console.log(data);
+
     axios
-      .post("/addContext", data)
+      .post("/addContext", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res) => {
         console.log(res);
         localStorage.setItem("indexKey", res.data);
@@ -204,6 +231,7 @@ export default function Body() {
 
   // triggers the input when the button is clicked
   const onButtonClick = () => {
+    inputRef.current.value = "";
     inputRef.current.click();
   };
   return (
@@ -263,7 +291,7 @@ export default function Body() {
               <span>{file.name}</span>
               <span
                 className="text-red-500"
-                onClick={() => removeFile(file.name)}
+                onClick={() => removeFile(file.name, idx)}
               >
                 remove
               </span>
@@ -321,7 +349,7 @@ export default function Body() {
         ></input>
         <div className="flex flex-row mt-2 justify-between">
           <div className="flex flex-row space-x-4 items-center">
-            <button onClick={clearChat}>
+            <button onClick={reset}>
               <img alt="refresh-logo" src={RefreshImg} className="w-4 h-4" />
             </button>
             <span className="text-[#949494] italic text-[12px]">
