@@ -147,11 +147,11 @@ export default function Body() {
       .then((res) => {
         console.log(res);
         localStorage.setItem("indexKey", res.data);
-
         setFiles([]);
         setDisableUpload(true);
         setDisableChat(false);
         setTimeout(clearChat, 300000);
+        // setTimeout(clearChat, 5000);
         setChats((prevChats: any) => [
           ...prevChats,
           {
@@ -237,7 +237,7 @@ export default function Body() {
   return (
     <div className="flex flex-col items-center h-screen">
       <form
-        className={`border border-[#0c8ce9] p-3 w-[60%] h-auto bg-[#eff5f9] mt-6 text-center rounded-lg ${
+        className={`border border-[#0c8ce9] p-3 md:w-[60%] lg:w-[60%] w-[100%] h-auto bg-[#eff5f9] mt-6 text-center rounded-lg ${
           dragActive ? "border-2" : ""
         }`}
         onDragEnter={handleDragEnter}
@@ -299,7 +299,7 @@ export default function Body() {
           ))}
         </div>
       </form>
-      <div className="flex flex-col w-[60%] h-[100vh]">
+      <div className="flex flex-col md:w-[60%] lg:w-[60%] w-[100%]  h-[100vh]">
         <div className="rounded-lg mt-3 w-full h-full p-4 border border-[#ebebeb] flex flex-col justify-end overflow-y-auto">
           {/* <div className="rounded-lg mt-3 w-full h-full p-4 border border-[#ebebeb] flex flex-col justify-end "> */}
           {chats.length > 0 ? (
