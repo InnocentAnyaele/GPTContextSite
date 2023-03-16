@@ -128,6 +128,7 @@ export default function Body() {
         message: "Reading your document...",
       },
     ]);
+    setDisableUpload(true);
 
     let data = new FormData();
     data.append("fileLength", files.length);
@@ -148,7 +149,6 @@ export default function Body() {
         console.log(res);
         localStorage.setItem("indexKey", res.data);
         setFiles([]);
-        setDisableUpload(true);
         setDisableChat(false);
         setTimeout(clearChat, 300000);
         // setTimeout(clearChat, 5000);
@@ -163,6 +163,7 @@ export default function Body() {
       })
       .catch((err) => {
         console.log(err);
+        setDisableUpload(false);
         setChats((prevChats: any) => [
           ...prevChats,
           {
@@ -263,6 +264,7 @@ export default function Body() {
             <span className="font-bold text-[#3038b0]" onClick={onButtonClick}>
               Choose file
             </span>{" "}
+            <p className="text-[#c6392b]">(.pdf & .docx)</p>
             to upload
           </span>
         </label>
@@ -278,7 +280,7 @@ export default function Body() {
         <button
           className={`${
             disableUpload ? "bg-[#bababa]" : "bg-black"
-          } bg-black rounded-lg p-2 mt-3`}
+          } rounded-lg p-2 mt-3`}
           onClick={handleSubmitFile}
           disabled={disableUpload}
         >
