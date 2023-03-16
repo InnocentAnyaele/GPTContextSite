@@ -264,7 +264,7 @@ export default function Body() {
             <span className="font-bold text-[#3038b0]" onClick={onButtonClick}>
               Choose file
             </span>{" "}
-            <p className="text-[#c6392b]">(.pdf & .docx)</p>
+            <p className="text-[#c6392b]">(.pdf, .docx, .txt)</p>
             to upload
           </span>
         </label>
