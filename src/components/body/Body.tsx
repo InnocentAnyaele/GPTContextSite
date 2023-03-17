@@ -141,7 +141,9 @@ export default function Body() {
 
     axios
       .post("https://1nnocent.pythonanywhere.com/api/addContext", data, {
+        withCredentials: true,
         headers: {
+          "Access-Control-Allow-Origin": "*",
           "Content-Type": "multipart/form-data",
         },
       })
@@ -202,7 +204,13 @@ export default function Body() {
       data.append("indexKey", indexKey);
       console.log(data);
       axios
-        .post("https://1nnocent.pythonanywhere.com/api/getResponse", data)
+        .post("https://1nnocent.pythonanywhere.com/api/getResponse", data, {
+          withCredentials: true,
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "multipart/form-data",
+          },
+        })
         .then((res) => {
           setResponseLoading(false);
           setChats((prevState: any) => [
