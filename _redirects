@@ -1,1 +1,2 @@
-/api/* http://1nnocent.pythonanywhere.com 200!
+/* /index.html  200
+/api/* http://1nnocent.pythonanywhere.com/:splat 200!
