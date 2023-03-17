@@ -140,7 +140,7 @@ export default function Body() {
     console.log(data);
 
     axios
-      .post("/api/addContext", data, {
+      .post("http://1nnocent.pythonanywhere.com/api/addContext", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -202,7 +202,7 @@ export default function Body() {
       data.append("indexKey", indexKey);
       console.log(data);
       axios
-        .post("/api/getResponse", data)
+        .post("http://1nnocent.pythonanywhere.com/api/getResponse", data)
         .then((res) => {
           setResponseLoading(false);
           setChats((prevState: any) => [
