@@ -144,12 +144,15 @@ export default function Body() {
     const splitLastFileName = files[files.length - 1].name.split(".");
     const lastFileExtension = splitLastFileName[splitLastFileName.length - 1];
 
+    // console.log(`Bearer ${process.env.REACT_APP_BEARER_TOKEN}`);
+
     axios
       // .post(" http://127.0.0.1:5000/api/addContext", data, {
       .post(" https://1nnocent.pythonanywhere.com/api/addContext", data, {
         // withCredentials: true,
         headers: {
           // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${process.env.REACT_APP_BEARER_TOKEN}`,
           "Content-Type": "multipart/form-data",
         },
       })
@@ -218,6 +221,7 @@ export default function Body() {
           // withCredentials: true,
           headers: {
             // "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${process.env.REACT_APP_BEARER_TOKEN}`,
             "Content-Type": "multipart/form-data",
           },
         })
