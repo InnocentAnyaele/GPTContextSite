@@ -85,31 +85,35 @@ export default function Body() {
   function handleDrop(e: any) {
     e.preventDefault();
     e.stopPropagation();
-    console.log("Dropped!!!!");
+    // console.log("Dropped!!!!");
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      // handleFiles(e.dataTransfer.files);
-      console.log(e.dataTransfer.files);
-      for (let i = 0; i < e.dataTransfer.files["length"]; i++) {
-        setFiles((prevState: any) => [...prevState, e.dataTransfer.files[i]]);
+    if (files.length < 1) {
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        // handleFiles(e.dataTransfer.files);
+        // console.log(e.dataTransfer.files);
+        for (let i = 0; i < e.dataTransfer.files["length"]; i++) {
+          setFiles((prevState: any) => [...prevState, e.dataTransfer.files[i]]);
+        }
       }
     }
   }
 
   const handleChange = function (e: any) {
     e.preventDefault();
-    console.log("File has been added");
-    if (e.target.files && e.target.files[0]) {
-      // handleFiles(e.target.files);
-      console.log(e.target.files);
-      for (let i = 0; i < e.target.files["length"]; i++) {
-        setFiles((prevState: any) => [...prevState, e.target.files[i]]);
+    // console.log("File has been added");
+    if (files.length < 1) {
+      if (e.target.files && e.target.files[0]) {
+        // handleFiles(e.target.files);
+        // console.log(e.target.files);
+        for (let i = 0; i < e.target.files["length"]; i++) {
+          setFiles((prevState: any) => [...prevState, e.target.files[i]]);
+        }
       }
     }
   };
 
   function removeFile(fileName: any, idx: any) {
-    console.log("this is the old arr", files);
+    // console.log("this is the old arr", files);
     const newArr = [...files];
     newArr.splice(idx, 1);
     setFiles([]);
@@ -137,10 +141,12 @@ export default function Body() {
       data.append("file" + i.toString(), files[i]);
     }
 
-    console.log(data);
+    const splitLastFileName = files[files.length - 1].name.split(".");
+    const lastFileExtension = splitLastFileName[splitLastFileName.length - 1];
 
     axios
-      .post("https://1nnocent.pythonanywhere.com/api/addContext", data, {
+      // .post(" http://127.0.0.1:5000/api/addContext", data, {
+      .post(" https://1nnocent.pythonanywhere.com/api/addContext", data, {
         // withCredentials: true,
         headers: {
           // "Access-Control-Allow-Origin": "*",
@@ -148,8 +154,9 @@ export default function Body() {
         },
       })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         localStorage.setItem("indexKey", res.data);
+        localStorage.setItem("fileType", lastFileExtension);
         setFiles([]);
         setDisableChat(false);
         setTimeout(clearChat, 300000);
@@ -164,7 +171,7 @@ export default function Body() {
         ]);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         setDisableUpload(false);
         setChats((prevChats: any) => [
           ...prevChats,
@@ -198,13 +205,16 @@ export default function Body() {
       setUserMessage("");
       setResponseLoading(true);
       let indexKey: any = localStorage.getItem("indexKey");
+      let fileType: any = localStorage.getItem("fileType");
       let prompt = userMessage;
       let data = new FormData();
       data.append("prompt", prompt);
       data.append("indexKey", indexKey);
-      console.log(data);
+      data.append("fileType", fileType);
+      // console.log(data);
       axios
-        .post("https://1nnocent.pythonanywhere.com/api/getResponse", data, {
+        // .post(" http://127.0.0.1:5000/api/getResponse", data, {
+        .post(" https://1nnocent.pythonanywhere.com/api/getResponse", data, {
           // withCredentials: true,
           headers: {
             // "Access-Control-Allow-Origin": "*",
@@ -217,8 +227,8 @@ export default function Body() {
             ...prevState,
             { sender: "AI", message: res.data },
           ]);
-          console.log(res);
-          console.log(res.data);
+          // console.log(res);
+          // console.log(res.data);
         })
         .catch((err) => {
           setResponseLoading(false);
@@ -259,9 +269,11 @@ export default function Body() {
           className="hidden"
           ref={inputRef}
           type="file"
-          multiple={true}
+          // multiple={true}
+          max={1}
           onChange={handleChange}
-          accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf"
+          // accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
+          accept=".doc, .docx, .txt, .pdf, .csv"
         />
         <label>
           <div className="flex justify-center items-center m-2">
@@ -272,7 +284,7 @@ export default function Body() {
             <span className="font-bold text-[#3038b0]" onClick={onButtonClick}>
               Choose file
             </span>{" "}
-            <p className="text-[#c6392b]">(.pdf, .docx, .txt)</p>
+            <p className="text-[#c6392b]">(.pdf, .docx, .txt, .csv)</p>
             to upload
           </span>
         </label>
