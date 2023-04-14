@@ -75,8 +75,8 @@ export default function Chat() {
       // Sends a POST request to the backend API to get response from the AI
       axios
         // .post(" http://127.0.0.1:5000/api/getResponse", data, {
-        .post("https://gptcontext.onrender.com/api/getResponse", data, {
-          // .post(" https://1nnocent.pythonanywhere.com/api/getResponse", data, {
+        // .post("https://gptcontext.onrender.com/api/getResponse", data, {
+        .post(" https://1nnocent.pythonanywhere.com/api/getResponse", data, {
           // withCredentials: true,
           headers: {
             // "Access-Control-Allow-Origin": "*",

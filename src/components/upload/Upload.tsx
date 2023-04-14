@@ -139,8 +139,8 @@ export default function Upload() {
 
     axios
       //   .post(" http://127.0.0.1:5000/api/addContext", data, {
-      .post("https://gptcontext.onrender.com/api/addContext", data, {
-        //   .post(" https://1nnocent.pythonanywhere.com/api/addContext", data, {
+      //   .post("https://gptcontext.onrender.com/api/addContext", data, {
+      .post(" https://1nnocent.pythonanywhere.com/api/addContext", data, {
         // withCredentials: true,
         headers: {
           // "Access-Control-Allow-Origin": "*",
