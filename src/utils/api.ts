@@ -6,4 +6,4 @@ const renderAPI:string = 'https://gptcontext.onrender.com'
 // doesn't support excel
 const pythonAnywhereAPI:string = 'https://1nnocent.pythonanywhere.com'
 
-export const api:string = pythonAnywhereAPI
+export const api:string = renderAPI

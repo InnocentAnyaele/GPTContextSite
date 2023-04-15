@@ -202,7 +202,8 @@ export default function Upload() {
         // multiple={true}
         max={1}
         onChange={handleChange}
-        accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
+        // accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
+        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
         // accept=".doc, .docx, .txt, .pdf, .csv"
       />
       <label>
