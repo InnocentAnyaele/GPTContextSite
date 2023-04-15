@@ -2,6 +2,7 @@ import { useContext, useState, useEffect, useRef } from "react";
 import RefreshImg from "../../img/RefreshSVG.svg";
 import { SessionContext } from "../body/Body";
 import axios from "axios";
+import { api } from "../../utils/api";
 
 export default function Chat() {
   // Destructuring values from the SessionContext
@@ -74,9 +75,7 @@ export default function Chat() {
       // console.log(data);
       // Sends a POST request to the backend API to get response from the AI
       axios
-        // .post(" http://127.0.0.1:5000/api/getResponse", data, {
-        // .post("https://gptcontext.onrender.com/api/getResponse", data, {
-        .post(" https://1nnocent.pythonanywhere.com/api/getResponse", data, {
+        .post(`${api}/api/getResponse`, data, {
           // withCredentials: true,
           headers: {
             // "Access-Control-Allow-Origin": "*",

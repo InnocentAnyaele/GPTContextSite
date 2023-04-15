@@ -2,6 +2,7 @@ import { useState, useRef, useContext } from "react";
 import DocumentSVG from "../../img/document.svg";
 import axios from "axios";
 import { SessionContext } from "../body/Body";
+import { api } from "../../utils/api";
 
 export default function Upload() {
   const {
@@ -138,9 +139,7 @@ export default function Upload() {
     // console.log(`Bearer ${process.env.REACT_APP_BEARER_TOKEN}`);
 
     axios
-      //   .post(" http://127.0.0.1:5000/api/addContext", data, {
-      //   .post("https://gptcontext.onrender.com/api/addContext", data, {
-      .post(" https://1nnocent.pythonanywhere.com/api/addContext", data, {
+      .post(`${api}/api/addContext`, data, {
         // withCredentials: true,
         headers: {
           // "Access-Control-Allow-Origin": "*",
