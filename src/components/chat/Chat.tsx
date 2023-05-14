@@ -22,7 +22,7 @@ export default function Chat() {
   const chatRef = useRef<any>(null);
   useEffect(() => {
     chatRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chats]);
+    }, [chats]);
 
   // resets the chat on timeout, disables chat and enables upload
   function reset() {
@@ -48,11 +48,11 @@ export default function Chat() {
       setChats((prevChats: any) => [
         ...prevChats,
         {
-          sender: "AI",
+          sender: "system",
           message:
             "Chat context has expired after 5 mins. Clear context and upload new files.",
         },
-      ]);
+        ]);
       return;
     }
     if (userMessage) {
@@ -60,7 +60,7 @@ export default function Chat() {
       setChats((prevChats: any) => [
         ...prevChats,
         { sender: "user", message: userMessage },
-      ]);
+        ]);
       setUserMessage("");
       setResponseLoading(true);
       let indexKey: any = localStorage.getItem("indexKey");
@@ -72,6 +72,7 @@ export default function Chat() {
       data.append("indexKey", indexKey);
       data.append("fileType", fileType);
       data.append("fileName", fileName);
+      data.append("chatHistory", JSON.stringify(chats));
       // console.log(data);
       // Sends a POST request to the backend API to get response from the AI
       axios
@@ -87,8 +88,8 @@ export default function Chat() {
           setResponseLoading(false);
           setChats((prevState: any) => [
             ...prevState,
-            { sender: "AI", message: res.data },
-          ]); // Appends AI's response to the chat
+            { sender: "system", message: res.data },
+            ]); // Appends AI's response to the chat
           // console.log(res);
           // console.log(res.data);
         })
@@ -102,11 +103,11 @@ export default function Chat() {
           setChats((prevState: any) => [
             ...prevState,
             {
-              sender: "AI",
+              sender: "system",
               message:
                 "Sorry something went wrong. Try again later or restart context",
             },
-          ]);
+            ]);
         });
     }
   }
@@ -123,33 +124,33 @@ export default function Chat() {
                   key={idx}
                   ref={chatRef}
                   className={`${
-                    chat.sender === "user"
+                  chat.sender === "user"
                       ? "bg-[#2460ba] ml-auto"
                       : "bg-[#ebebeb] mr-auto"
-                  } p-3 max-w-[70%] rounded-lg`}
-                >
+                } p-3 max-w-[70%] rounded-lg`}
+                  >
                   <span
                     className={`${
-                      chat.sender === "user" ? "text-white" : "text-black"
-                    } break-all`}
-                  >
+                    chat.sender === "user" ? "text-white" : "text-black"
+                  } break-all`}
+                    >
                     {chat.message}
                   </span>
                 </div>
-              ))}
+                ))}
             </div>
             {responseLoading && (
               <div className="text-center mt-3">
                 <span className="text-[#bababa]">Loading response...</span>
               </div>
-            )}
+              )}
           </div>
-        ) : (
-          // </div>
+          ) : (
+            // </div>
           <div className="flex justify-center mt-[10%]">
             <span className="text-[#bababa]">No chats yet</span>
           </div>
-        )}
+          )}
         {/* </div> */}
       </div>
 
@@ -159,7 +160,7 @@ export default function Chat() {
         type="textarea"
         value={userMessage}
         onChange={(e) => setUserMessage(e.target.value)}
-      ></input>
+        ></input>
       <div className="flex flex-row mt-2 justify-between">
         <div className="flex flex-row space-x-4 items-center">
           <button onClick={reset}>
@@ -172,15 +173,15 @@ export default function Chat() {
         </div>
         <button
           className={`${
-            disableChat ? "bg-[#bababa]" : "bg-[#2460ba]"
-          }  p-2 rounded-md h-10 w-28`}
+          disableChat ? "bg-[#bababa]" : "bg-[#2460ba]"
+        }  p-2 rounded-md h-10 w-28`}
           onClick={handleSend}
           disabled={disableChat}
           // disabled={false}
-        >
+          >
           <span className="text-white">Send</span>
         </button>
       </div>
     </div>
-  );
+    );
 }

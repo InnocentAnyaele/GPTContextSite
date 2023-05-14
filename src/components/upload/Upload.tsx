@@ -42,10 +42,10 @@ export default function Upload() {
     setChats((prevChats: any) => [
       ...prevChats,
       {
-        sender: "AI",
+        sender: "system",
         message: "Context has been cleared",
       },
-    ]);
+      ]);
     // window.location.reload();
   }
 
@@ -120,10 +120,10 @@ export default function Upload() {
     setChats((prevChats: any) => [
       ...prevChats,
       {
-        sender: "AI",
+        sender: "system",
         message: "Reading your document...",
       },
-    ]);
+      ]);
     setDisableUpload(true);
 
     let data = new FormData();
@@ -159,11 +159,11 @@ export default function Upload() {
         setChats((prevChats: any) => [
           ...prevChats,
           {
-            sender: "AI",
+            sender: "system",
             message:
               "Context has been uploaded. Ask away!! NB: Session will expire after 5 mins.",
           },
-        ]);
+          ]);
       })
       .catch((err) => {
         // console.log(err);
@@ -171,11 +171,11 @@ export default function Upload() {
         setChats((prevChats: any) => [
           ...prevChats,
           {
-            sender: "AI",
+            sender: "system",
             message:
               "Sorry something went wrong. Try again later or restart context",
           },
-        ]);
+          ]);
       });
   }
 
@@ -187,14 +187,14 @@ export default function Upload() {
   return (
     <form
       className={`border border-[#0c8ce9] p-3 md:w-[60%] lg:w-[60%] w-[100%] h-auto bg-[#eff5f9] mt-6 text-center rounded-lg ${
-        dragActive ? "border-2" : ""
-      }`}
+      dragActive ? "border-2" : ""
+    }`}
       onDragEnter={handleDragEnter}
       onSubmit={(e) => e.preventDefault()}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
-    >
+      >
       <input
         className="hidden"
         ref={inputRef}
@@ -203,8 +203,8 @@ export default function Upload() {
         max={1}
         onChange={handleChange}
         // accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
-        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
-        // accept=".doc, .docx, .txt, .pdf, .csv"
+//        accept=".xlsx,.xls,.doc, .docx,.ppt, .pptx,.txt, .pdf, .csv"
+         accept=".pdf"
       />
       <label>
         <div className="flex justify-center items-center m-2">
@@ -215,7 +215,7 @@ export default function Upload() {
           <span className="font-bold text-[#3038b0]" onClick={onButtonClick}>
             Choose file
           </span>{" "}
-          <p className="text-[#c6392b]">(.pdf, .docx, .txt, .csv)</p>
+          <p className="text-[#c6392b]">(accepts only pdf)</p>
           to upload
         </span>
       </label>
@@ -230,11 +230,11 @@ export default function Upload() {
       <br></br>
       <button
         className={`${
-          disableUpload ? "bg-[#bababa]" : "bg-black"
-        } rounded-lg p-2 mt-3`}
+        disableUpload ? "bg-[#bababa]" : "bg-black"
+      } rounded-lg p-2 mt-3`}
         onClick={handleSubmitFile}
         disabled={disableUpload}
-      >
+        >
         <span className="p-2 text-white">Submit</span>
       </button>
       {uploadError && <p>{uploadError}</p>}
@@ -245,12 +245,12 @@ export default function Upload() {
             <span
               className="text-red-500"
               onClick={() => removeFile(file.name, idx)}
-            >
+              >
               remove
             </span>
           </div>
-        ))}
+          ))}
       </div>
     </form>
-  );
+    );
 }
