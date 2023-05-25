@@ -1,14 +1,14 @@
 
 //const localAPI:string = 'http://127.0.0.1:5000'
 
-const renderAPI:string = 'https://gptcontext.onrender.com'
+// const renderAPI:string = 'https://gptcontext.onrender.com'
 
 // doesn't support excel
 //const pythonAnywhereAPI:string = 'https://1nnocent.pythonanywhere.com'
 
 // only supports PDF
-// const renderAPI2:string = "https://gptcontextserver2.onrender.com"
+const renderAPI2:string = "https://gptcontextserver2.onrender.com"
 
-export const api:string = renderAPI
+export const api:string = renderAPI2
 
 
